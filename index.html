@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dima's Grade 4 Phonics & Spelling Smart Exam</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                        },
+                        violet: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            900: '#4c1d95',
+                        }
+                    },
+                    fontFamily: {
+                        outfit: ['Outfit', 'sans-serif'],
+                        jakarta: ['Plus Jakarta Sans', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+        h1, h2, h3, .font-heading {
+            font-family: 'Outfit', sans-serif;
+        }
+        .correct-input {
+            background-color: #ecfdf5 !important;
+            border-color: #10b981 !important;
+            color: #047857 !important;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15) !important;
+        }
+        .incorrect-input {
+            background-color: #fef2f2 !important;
+            border-color: #ef4444 !important;
+            color: #b91c1c !important;
+            animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+        .tab-btn.active {
+            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+            color: white;
+            box-shadow: 0 10px 15px -3px rgba(124, 58, 237, 0.3);
+            transform: translateY(-1px);
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="min-h-screen text-slate-800 flex flex-col antialiased selection:bg-violet-200 selection:text-violet-900">
+
+    <!-- Navigation & Header -->
+    <header class="sticky top-0 z-50 glass-panel shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 py-3 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                
+                <!-- Title & Branding -->
+                <div class="flex items-center space-x-3.5">
+                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-violet-600 to-indigo-500 text-white flex items-center justify-center shadow-md shadow-violet-500/20 text-xl font-bold">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Dima's Smart Phonics Portal</h1>
+                            <span class="bg-violet-100 text-violet-800 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Interactive</span>
+                        </div>
+                        <p class="text-xs text-slate-500 font-medium">McGraw-Hill Reading Wonders • Grade 4 Unit 1</p>
+                    </div>
+                </div>
+
+                <!-- Global Action Toolbar -->
+                <div class="flex flex-wrap items-center gap-2">
+                    <button onclick="checkCurrentPage()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl font-bold text-xs sm:text-sm shadow-lg shadow-emerald-600/20 hover:shadow-emerald-600/30 transition duration-150 flex items-center gap-2">
+                        <i class="fa-solid fa-circle-check"></i> Check Page
+                    </button>
+                    <button onclick="solveCurrentPage()" class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-xl font-bold text-xs sm:text-sm shadow-lg shadow-amber-500/20 hover:shadow-amber-500/30 transition duration-150 flex items-center gap-2">
+                        <i class="fa-solid fa-key"></i> Reveal Page
+                    </button>
+                    <button onclick="resetCurrentPage()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-3.5 py-2 rounded-xl font-bold text-xs sm:text-sm transition duration-150 flex items-center gap-1.5">
+                        <i class="fa-solid fa-rotate-left"></i> Reset
+                    </button>
+                </div>
+            </div>
+
+            <!-- Page Selection Tabs Navigation -->
+            <div class="mt-4 flex items-center gap-2 overflow-x-auto pb-1.5 scrollbar-none text-xs sm:text-sm font-medium">
+                <button onclick="switchTab('p7')" id="tab-p7" class="tab-btn active whitespace-nowrap px-3.5 py-2 rounded-xl text-slate-600 hover:bg-slate-100 transition">
+                    W1 • P.7 Word Sort
+                </button>
+                <button onclick="switchTab('p8')" id="tab-p8" class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-xl text-slate-600 hover:bg-slate-100 transition">
+                    W1 • P.8 Word Meaning
+                </button>
+                <button onclick="switchTab('p9')" id="tab-p9" class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-xl text-slate-600 hover:bg-slate-100 transition">
+                    W1 • P.9 Proofreading
+                </button>
+                <button onclick="switchTab('p10')" id="tab-p10" class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-xl text-slate-600 hover:bg-slate-100 transition">
+                    W1 • P.10 Review
+                </button>
+                <button onclick="switchTab('p19')" id="tab-p19" class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-xl text-slate-600 hover:bg-slate-100 transition">
+                    W2 • P.19 Word Sort
+                </button>
+                <button onclick="switchTab('p20')" id="tab-p20" class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-xl text-slate-600 hover:bg-slate-100 transition">
+                    W2 • P.20 Word Meaning
+                </button>
+                <button onclick="switchTab('p21')" id="tab-p21" class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-xl text-slate-600 hover:bg-slate-100 transition">
+                    W2 • P.21 Proofreading
+                </button>
+                <button onclick="switchTab('p22')" id="tab-p22" class="tab-btn whitespace-nowrap px-3.5 py-2 rounded-xl text-slate-600 hover:bg-slate-100 transition">
+                    W2 • P.22 Review
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-5xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+
+        <!-- Progress Scoreboard Bar -->
+        <div class="glass-panel rounded-2xl p-4 mb-6 shadow-sm flex flex-wrap items-center justify-between gap-4 border border-slate-200/80">
+            <div class="flex items-center gap-3">
+                <span id="current-page-badge" class="bg-violet-100 text-violet-800 font-bold px-3 py-1 rounded-lg text-xs sm:text-sm">
+                    Unit 1 Week 1 • Page 7
+                </span>
+                <div class="text-slate-600 text-xs sm:text-sm font-semibold flex items-center gap-1.5">
+                    <i class="fa-solid fa-trophy text-amber-500"></i> Score: 
+                    <span id="score-val" class="text-violet-700 font-extrabold text-base">0</span> / <span id="total-val" class="font-bold">20</span>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                <button onclick="solveAllPages()" class="bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white px-3.5 py-1.5 rounded-xl text-xs font-bold transition shadow-md shadow-indigo-500/20">
+                    <i class="fa-solid fa-wand-magic-sparkles mr-1.5"></i> Auto-Complete All
+                </button>
+            </div>
+        </div>
+
+        <!-- ================= PAGE 7 ================= -->
+        <div id="page-p7" class="page-content space-y-6">
+            <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80">
+                <div class="border-b border-slate-100 pb-5 mb-5 flex justify-between items-start">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Phonics/Spelling Word Sort</h2>
+                        <p class="text-xs sm:text-sm text-slate-500 font-medium mt-1">Unit 1 Week 1 • Short Vowels (Page 7)</p>
+                    </div>
+                    <span class="bg-slate-100 text-slate-700 text-xs font-semibold px-3 py-1 rounded-full">Unit 1 • Week 1</span>
+                </div>
+
+                <!-- Phonics Rule Box -->
+                <div class="bg-violet-50/70 rounded-2xl p-5 text-xs sm:text-sm text-violet-950 mb-6 border border-violet-100 leading-relaxed">
+                    <div class="flex items-center gap-2 font-bold text-violet-900 mb-2">
+                        <i class="fa-solid fa-lightbulb text-amber-500"></i> Phonics Rule & Tip
+                    </div>
+                    <p class="mb-2">Words with the same short vowel sound can be spelled in different ways.</p>
+                    <ul class="list-disc list-inside space-y-1 text-slate-700">
+                        <li>The words <em>ink</em>, <em>build</em>, and <em>gym</em> each have a short <strong>i</strong> sound.</li>
+                        <li>The words <em>egg</em> and <em>head</em> each have a short <strong>e</strong> sound.</li>
+                        <li><strong>Spelling Tip:</strong> Short <em>a</em> words are usually spelled using <em>a</em> (flap, tap, clap). Short <em>o</em> words are usually spelled using <em>o</em> (lot, stop, plod).</li>
+                    </ul>
+                </div>
+
+                <!-- Interactive Word Bank -->
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200/60 mb-6">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-1.5">
+                        <i class="fa-solid fa-layer-group"></i> Word Bank
+                    </h3>
+                    <div class="grid grid-cols-4 sm:grid-cols-5 gap-2 text-center text-xs sm:text-sm font-semibold text-slate-700">
+                        <span class="bg-white p-2 rounded-xl border border-slate-200/80 shadow-2xs">flat</span>
+                        <span class="bg-white p-2 rounded-xl border border-slate-200/80 shadow-2xs">left</span>
+                        <span class="bg-white p-2 rounded-xl border border-slate-200/80 shadow-2xs">mill</span>
+                        <span class="bg-white p-2 rounded-xl border border-slate-200/80 shadow-2xs">blot</span>
+                        <span class="bg-white p-2 rounded-xl border border-slate-200/80 shadow-2xs">bluff</span>
+                        <span class="bg-white p-2 rounded-xl border border-slate-200/80 shadow-2xs">grim</span>
+                        <span class="bg-white p-2 rounded-xl border border-slate-200/80 shadow-2xs">shelf</span>
+                        <span class="bg-white p-2 rounded-xl border border-slate-200/80 shadow-2xs">gym</span>
+                        <span class="bg-white p-2 rounded-xl border border-slate-200/80 shadow-2xs">wealth</span>
+                        <span class="bg-white p-2 rounded-xl border border-slate-200/80 shadow-2xs">band</span>
+                        <span class="bg-white p-2 rounded-xl border border-slate-200/80 shadow-2xs">plot</span>
+                        <span class="bg-white p-2 rounded-xl border border-slate-200/80 shadow-2xs">plum</span>
+                        <span class="bg-white p-2 rounded-xl border border-slate-200/80 shadow-2xs">crunch</span>
+                        <span class="bg-white p-2 rounded-xl border border-slate-200/80 shadow-2xs">bell</span>
+                        <span class="bg-white p-2 rounded-xl border border-slate-200/80 shadow-2xs">build</span>
+                        <span class="bg-white p-2 rounded-xl border border-slate-200/80 shadow-2xs">sum</span>
+                        <span class="bg-white p-2 rounded-xl border border-slate-200/80 shadow-2xs">cash</span>
+                        <span class="bg-white p-2 rounded-xl border border-slate-200/80 shadow-2xs">dock</span>
+                        <span class="bg-white p-2 rounded-xl border border-slate-200/80 shadow-2xs">odd</span>
+                        <span class="bg-white p-2 rounded-xl border border-slate-200/80 shadow-2xs">hint</span>
+                    </div>
+                </div>
+
+                <!-- Sort Sections Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-indigo-50/40 p-5 rounded-2xl border border-indigo-100">
+                        <h4 class="font-bold text-indigo-950 mb-3 text-sm">short a as in <em>splat</em></h4>
+                        <div class="space-y-2.5">
+                            <div class="flex items-center gap-2"><span class="w-6 text-xs font-bold text-slate-400">1.</span><input type="text" data-ans="flat" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 transition focus:outline-none focus:ring-2 focus:ring-violet-500"></div>
+                            <div class="flex items-center gap-2"><span class="w-6 text-xs font-bold text-slate-400">2.</span><input type="text" data-ans="band" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 transition focus:outline-none focus:ring-2 focus:ring-violet-500"></div>
+                            <div class="flex items-center gap-2"><span class="w-6 text-xs font-bold text-slate-400">3.</span><input type="text" data-ans="cash" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 transition focus:outline-none focus:ring-2 focus:ring-violet-500"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-indigo-50/40 p-5 rounded-2xl border border-indigo-100">
+                        <h4 class="font-bold text-indigo-950 mb-3 text-sm">short e spelled <em>e</em> as in <em>tell</em></h4>
+                        <div class="space-y-2.5">
+                            <div class="flex items-center gap-2"><span class="w-6 text-xs font-bold text-slate-400">4.</span><input type="text" data-ans="left" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 transition focus:outline-none focus:ring-2 focus:ring-violet-500"></div>
+                            <div class="flex items-center gap-2"><span class="w-6 text-xs font-bold text-slate-400">5.</span><input type="text" data-ans="shelf" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 transition focus:outline-none focus:ring-2 focus:ring-violet-500"></div>
+                            <div class="flex items-center gap-2"><span class="w-6 text-xs font-bold text-slate-400">6.</span><input type="text" data-ans="bell" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 transition focus:outline-none focus:ring-2 focus:ring-violet-500"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-indigo-50/40 p-5 rounded-2xl border border-indigo-100">
+                        <h4 class="font-bold text-indigo-950 mb-3 text-sm">short e spelled <em>ea</em> as in <em>health</em></h4>
+                        <div class="space-y-2.5">
+                            <div class="flex items-center gap-2"><span class="w-6 text-xs font-bold text-slate-400">7.</span><input type="text" data-ans="wealth" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 transition focus:outline-none focus:ring-2 focus:ring-violet-500"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-teal-50/40 p-5 rounded-2xl border border-teal-100">
+                        <h4 class="font-bold text-teal-950 mb-3 text-sm">short i spelled <em>i</em> as in <em>flick</em></h4>
+                        <div class="space-y-2.5">
+                            <div class="flex items-center gap-2"><span class="w-6 text-xs font-bold text-slate-400">8.</span><input type="text" data-ans="mill" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 transition focus:outline-none focus:ring-2 focus:ring-violet-500"></div>
+                            <div class="flex items-center gap-2"><span class="w-6 text-xs font-bold text-slate-400">9.</span><input type="text" data-ans="grim" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 transition focus:outline-none focus:ring-2 focus:ring-violet-500"></div>
+                            <div class="flex items-center gap-2"><span class="w-6 text-xs font-bold text-slate-400">10.</span><input type="text" data-ans="hint" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 transition focus:outline-none focus:ring-2 focus:ring-violet-500"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-teal-50/40 p-5 rounded-2xl border border-teal-100">
+                        <h4 class="font-bold text-teal-950 mb-3 text-sm">short i spelled <em>y</em> & <em>ui</em></h4>
+                        <div class="space-y-2.5">
+                            <div class="flex items-center gap-2"><span class="w-6 text-xs font-bold text-slate-400">11.</span><span class="text-xs text-slate-400 w-16">(myth - y)</span><input type="text" data-ans="gym" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 transition focus:outline-none focus:ring-2 focus:ring-violet-500"></div>
+                            <div class="flex items-center gap-2"><span class="w-6 text-xs font-bold text-slate-400">12.</span><span class="text-xs text-slate-400 w-16">(guilt - ui)</span><input type="text" data-ans="build" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 transition focus:outline-none focus:ring-2 focus:ring-violet-500"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-amber-50/40 p-5 rounded-2xl border border-amber-100">
+                        <h4 class="font-bold text-amber-950 mb-3 text-sm">short o as in <em>stock</em></h4>
+                        <div class="space-y-2.5">
+                            <div class="flex items-center gap-2"><span class="w-6 text-xs font-bold text-slate-400">13.</span><input type="text" data-ans="blot" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 transition focus:outline-none focus:ring-2 focus:ring-violet-500"></div>
+                            <div class="flex items-center gap-2"><span class="w-6 text-xs font-bold text-slate-400">14.</span><input type="text" data-ans="plot" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 transition focus:outline-none focus:ring-2 focus:ring-violet-500"></div>
+                            <div class="flex items-center gap-2"><span class="w-6 text-xs font-bold text-slate-400">15.</span><input type="text" data-ans="dock" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 transition focus:outline-none focus:ring-2 focus:ring-violet-500"></div>
+                            <div class="flex items-center gap-2"><span class="w-6 text-xs font-bold text-slate-400">16.</span><input type="text" data-ans="odd" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 transition focus:outline-none focus:ring-2 focus:ring-violet-500"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-rose-50/40 p-5 rounded-2xl border border-rose-100 md:col-span-2">
+                        <h4 class="font-bold text-rose-950 mb-3 text-sm">short u as in <em>nuts</em></h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="flex items-center gap-2"><span class="w-6 text-xs font-bold text-slate-400">17.</span><input type="text" data-ans="bluff" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 transition focus:outline-none focus:ring-2 focus:ring-violet-500"></div>
+                            <div class="flex items-center gap-2"><span class="w-6 text-xs font-bold text-slate-400">18.</span><input type="text" data-ans="plum" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 transition focus:outline-none focus:ring-2 focus:ring-violet-500"></div>
+                            <div class="flex items-center gap-2"><span class="w-6 text-xs font-bold text-slate-400">19.</span><input type="text" data-ans="crunch" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 transition focus:outline-none focus:ring-2 focus:ring-violet-500"></div>
+                            <div class="flex items-center gap-2"><span class="w-6 text-xs font-bold text-slate-400">20.</span><input type="text" data-ans="sum" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 transition focus:outline-none focus:ring-2 focus:ring-violet-500"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= PAGE 8 ================= -->
+        <div id="page-p8" class="page-content space-y-6 hidden">
+            <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80">
+                <div class="border-b border-slate-100 pb-5 mb-5">
+                    <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Spelling Word Meaning</h2>
+                    <p class="text-xs sm:text-sm text-slate-500 font-medium mt-1">Unit 1 Week 1 • Complete Sentences & Match Definitions (Page 8)</p>
+                </div>
+
+                <!-- Part A: Sentences -->
+                <div class="mb-8">
+                    <h3 class="text-base font-bold text-violet-900 mb-4 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-lg bg-violet-100 text-violet-800 flex items-center justify-center text-xs">A</span> Complete each sentence:
+                    </h3>
+                    <div class="space-y-3.5">
+                        <div class="flex items-center gap-2 flex-wrap text-sm font-medium leading-relaxed">
+                            <span>1. She is the drum player in a</span>
+                            <input type="text" data-ans="band" class="w-32 p-2 border border-slate-200 rounded-xl text-center font-bold text-violet-900 focus:outline-none focus:ring-2 focus:ring-violet-500">
+                            <span>.</span>
+                        </div>
+                        <div class="flex items-center gap-2 flex-wrap text-sm font-medium leading-relaxed">
+                            <span>2. Did you tell the truth or was that a</span>
+                            <input type="text" data-ans="bluff" class="w-32 p-2 border border-slate-200 rounded-xl text-center font-bold text-violet-900 focus:outline-none focus:ring-2 focus:ring-violet-500">
+                            <span>?</span>
+                        </div>
+                        <div class="flex items-center gap-2 flex-wrap text-sm font-medium leading-relaxed">
+                            <span>3. I did not have enough</span>
+                            <input type="text" data-ans="cash" class="w-32 p-2 border border-slate-200 rounded-xl text-center font-bold text-violet-900 focus:outline-none focus:ring-2 focus:ring-violet-500">
+                            <span>on me to pay for it.</span>
+                        </div>
+                        <div class="flex items-center gap-2 flex-wrap text-sm font-medium leading-relaxed">
+                            <span>4. He brought the ball to</span>
+                            <input type="text" data-ans="gym" class="w-32 p-2 border border-slate-200 rounded-xl text-center font-bold text-violet-900 focus:outline-none focus:ring-2 focus:ring-violet-500">
+                            <span>class.</span>
+                        </div>
+                        <div class="flex items-center gap-2 flex-wrap text-sm font-medium leading-relaxed">
+                            <span>5. The car tires will</span>
+                            <input type="text" data-ans="crunch" class="w-32 p-2 border border-slate-200 rounded-xl text-center font-bold text-violet-900 focus:outline-none focus:ring-2 focus:ring-violet-500">
+                            <span>the can on the street.</span>
+                        </div>
+                        <div class="flex items-center gap-2 flex-wrap text-sm font-medium leading-relaxed">
+                            <span>6. I did not know that flour was made at this</span>
+                            <input type="text" data-ans="mill" class="w-32 p-2 border border-slate-200 rounded-xl text-center font-bold text-violet-900 focus:outline-none focus:ring-2 focus:ring-violet-500">
+                            <span>.</span>
+                        </div>
+                        <div class="flex items-center gap-2 flex-wrap text-sm font-medium leading-relaxed">
+                            <span>7. My favorite fruit is the</span>
+                            <input type="text" data-ans="plum" class="w-32 p-2 border border-slate-200 rounded-xl text-center font-bold text-violet-900 focus:outline-none focus:ring-2 focus:ring-violet-500">
+                            <span>.</span>
+                        </div>
+                        <div class="flex items-center gap-2 flex-wrap text-sm font-medium leading-relaxed">
+                            <span>8. This</span>
+                            <input type="text" data-ans="bell" class="w-32 p-2 border border-slate-200 rounded-xl text-center font-bold text-violet-900 focus:outline-none focus:ring-2 focus:ring-violet-500">
+                            <span>chimes at noon every day.</span>
+                        </div>
+                        <div class="flex items-center gap-2 flex-wrap text-sm font-medium leading-relaxed">
+                            <span>9. We got on the boat from the</span>
+                            <input type="text" data-ans="dock" class="w-32 p-2 border border-slate-200 rounded-xl text-center font-bold text-violet-900 focus:outline-none focus:ring-2 focus:ring-violet-500">
+                            <span>.</span>
+                        </div>
+                        <div class="flex items-center gap-2 flex-wrap text-sm font-medium leading-relaxed">
+                            <span>10. He</span>
+                            <input type="text" data-ans="left" class="w-32 p-2 border border-slate-200 rounded-xl text-center font-bold text-violet-900 focus:outline-none focus:ring-2 focus:ring-violet-500">
+                            <span>his glasses at home today.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Part B: Definitions -->
+                <div>
+                    <h3 class="text-base font-bold text-violet-900 mb-4 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-lg bg-violet-100 text-violet-800 flex items-center justify-center text-xs">B</span> Match words with definitions:
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                        <div class="flex items-center gap-2"><span class="w-28 font-semibold text-slate-600">11. soak up:</span><input type="text" data-ans="blot" class="w-full p-2 border border-slate-200 rounded-xl font-bold text-violet-900 focus:ring-2 focus:ring-violet-500"></div>
+                        <div class="flex items-center gap-2"><span class="w-28 font-semibold text-slate-600">12. gloomy:</span><input type="text" data-ans="grim" class="w-full p-2 border border-slate-200 rounded-xl font-bold text-violet-900 focus:ring-2 focus:ring-violet-500"></div>
+                        <div class="flex items-center gap-2"><span class="w-28 font-semibold text-slate-600">13. clue:</span><input type="text" data-ans="hint" class="w-full p-2 border border-slate-200 rounded-xl font-bold text-violet-900 focus:ring-2 focus:ring-violet-500"></div>
+                        <div class="flex items-center gap-2"><span class="w-28 font-semibold text-slate-600">14. make:</span><input type="text" data-ans="build" class="w-full p-2 border border-slate-200 rounded-xl font-bold text-violet-900 focus:ring-2 focus:ring-violet-500"></div>
+                        <div class="flex items-center gap-2"><span class="w-28 font-semibold text-slate-600">15. story line:</span><input type="text" data-ans="plot" class="w-full p-2 border border-slate-200 rounded-xl font-bold text-violet-900 focus:ring-2 focus:ring-violet-500"></div>
+                        <div class="flex items-center gap-2"><span class="w-28 font-semibold text-slate-600">16. not even:</span><input type="text" data-ans="odd" class="w-full p-2 border border-slate-200 rounded-xl font-bold text-violet-900 focus:ring-2 focus:ring-violet-500"></div>
+                        <div class="flex items-center gap-2"><span class="w-28 font-semibold text-slate-600">17. ledge:</span><input type="text" data-ans="shelf" class="w-full p-2 border border-slate-200 rounded-xl font-bold text-violet-900 focus:ring-2 focus:ring-violet-500"></div>
+                        <div class="flex items-center gap-2"><span class="w-28 font-semibold text-slate-600">18. lot of money:</span><input type="text" data-ans="wealth" class="w-full p-2 border border-slate-200 rounded-xl font-bold text-violet-900 focus:ring-2 focus:ring-violet-500"></div>
+                        <div class="flex items-center gap-2"><span class="w-28 font-semibold text-slate-600">19. not round:</span><input type="text" data-ans="flat" class="w-full p-2 border border-slate-200 rounded-xl font-bold text-violet-900 focus:ring-2 focus:ring-violet-500"></div>
+                        <div class="flex items-center gap-2"><span class="w-28 font-semibold text-slate-600">20. total:</span><input type="text" data-ans="sum" class="w-full p-2 border border-slate-200 rounded-xl font-bold text-violet-900 focus:ring-2 focus:ring-violet-500"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= PAGE 9 ================= -->
+        <div id="page-p9" class="page-content space-y-6 hidden">
+            <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80">
+                <div class="border-b border-slate-100 pb-5 mb-5">
+                    <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Spelling Proofreading</h2>
+                    <p class="text-xs sm:text-sm text-slate-500 font-medium mt-1">Unit 1 Week 1 • Find & Correct Misspelled Words (Page 9)</p>
+                </div>
+
+                <div class="bg-amber-50/60 border border-amber-200/80 rounded-2xl p-5 mb-6 text-sm text-amber-950 leading-relaxed">
+                    <div class="font-bold mb-3 flex items-center gap-2 text-amber-900">
+                        <i class="fa-solid fa-magnifying-glass"></i> Read the story and spot spelling mistakes:
+                    </div>
+                    <p class="text-slate-800 bg-white p-5 rounded-xl border border-amber-200/60 font-serif leading-loose text-base shadow-2xs">
+                        The classroom was quiet. Books sat closed and <span class="bg-rose-100 text-rose-800 underline font-semibold px-1.5 py-0.5 rounded">flatt</span> on the desks. 
+                        The class hamster was missing! The class liked Biscuit. The students had helped to <span class="bg-rose-100 text-rose-800 underline font-semibold px-1.5 py-0.5 rounded">bild</span> the hamster's cage. 
+                        They liked to watch Biscuit <span class="bg-rose-100 text-rose-800 underline font-semibold px-1.5 py-0.5 rounded">krunch</span> food and run on the wheel.<br><br>
+                        Chad looked very <span class="bg-rose-100 text-rose-800 underline font-semibold px-1.5 py-0.5 rounded">grimm</span>. He had taken Biscuit home last night. 
+                        He planned to bring the hamster back, but he had <span class="bg-rose-100 text-rose-800 underline font-semibold px-1.5 py-0.5 rounded">leeft</span> it at home. Chad raised his hand. 
+                        No one needed another <span class="bg-rose-100 text-rose-800 underline font-semibold px-1.5 py-0.5 rounded">hent</span>. The class knew who had taken Biscuit.
+                    </p>
+                </div>
+
+                <h3 class="text-sm font-bold text-slate-800 mb-3">Write the 6 misspelled words correctly:</h3>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8">
+                    <div class="flex items-center gap-2"><span class="text-xs font-bold text-slate-400">1.</span><input type="text" data-ans="flat" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm font-bold text-violet-900 focus:ring-2 focus:ring-violet-500"></div>
+                    <div class="flex items-center gap-2"><span class="text-xs font-bold text-slate-400">2.</span><input type="text" data-ans="build" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm font-bold text-violet-900 focus:ring-2 focus:ring-violet-500"></div>
+                    <div class="flex items-center gap-2"><span class="text-xs font-bold text-slate-400">3.</span><input type="text" data-ans="crunch" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm font-bold text-violet-900 focus:ring-2 focus:ring-violet-500"></div>
+                    <div class="flex items-center gap-2"><span class="text-xs font-bold text-slate-400">4.</span><input type="text" data-ans="grim" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm font-bold text-violet-900 focus:ring-2 focus:ring-violet-500"></div>
+                    <div class="flex items-center gap-2"><span class="text-xs font-bold text-slate-400">5.</span><input type="text" data-ans="left" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm font-bold text-violet-900 focus:ring-2 focus:ring-violet-500"></div>
+                    <div class="flex items-center gap-2"><span class="text-xs font-bold text-slate-400">6.</span><input type="text" data-ans="hint" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm font-bold text-violet-900 focus:ring-2 focus:ring-violet-500"></div>
+                </div>
+
+                <!-- Writing Connection -->
+                <div class="bg-teal-50/60 border border-teal-200/80 rounded-2xl p-5">
+                    <h3 class="font-bold text-teal-950 text-sm mb-1 flex items-center gap-2">
+                        <i class="fa-solid fa-pen-nib text-teal-600"></i> Writing Connection
+                    </h3>
+                    <p class="text-xs text-slate-600 mb-3">Write about something that happened in your classroom. Use at least 4 spelling list words.</p>
+                    <textarea id="p9-story" rows="4" class="w-full p-3.5 border border-teal-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500" placeholder="Yesterday in our classroom, we sat on a flat mat..."></textarea>
+                    <div class="mt-2 text-right">
+                        <button onclick="fillSampleStoryP9()" class="text-xs bg-teal-600 hover:bg-teal-700 text-white font-bold px-3 py-1.5 rounded-lg shadow-2xs transition">Auto-fill Sample</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= PAGE 10 ================= -->
+        <div id="page-p10" class="page-content space-y-6 hidden">
+            <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80">
+                <div class="border-b border-slate-100 pb-5 mb-5">
+                    <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Phonics/Spelling Review</h2>
+                    <p class="text-xs sm:text-sm text-slate-500 font-medium mt-1">Unit 1 Week 1 • Rhymes & Alphabetical Order (Page 10)</p>
+                </div>
+
+                <div class="mb-8">
+                    <h3 class="text-base font-bold text-violet-900 mb-4 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-lg bg-violet-100 text-violet-800 flex items-center justify-center text-xs">A</span> Select and type the rhyming word:
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 text-sm">
+                        <div class="p-4 bg-slate-50/80 rounded-2xl border border-slate-200/80">
+                            <span class="font-bold text-slate-900">1. clock</span>
+                            <div class="my-2 text-slate-600 space-x-3 text-xs"><label><input type="radio" name="p10-1" value="deck" onclick="syncRadioToInput(this)"> deck</label> <label><input type="radio" name="p10-1" value="dock" onclick="syncRadioToInput(this)"> dock</label> <label><input type="radio" name="p10-1" value="poke" onclick="syncRadioToInput(this)"> poke</label></div>
+                            <input type="text" data-ans="dock" class="p-2 border border-slate-200 rounded-xl w-full text-center font-bold text-violet-900 focus:ring-2 focus:ring-violet-500" placeholder="Type rhyme">
+                        </div>
+
+                        <div class="p-4 bg-slate-50/80 rounded-2xl border border-slate-200/80">
+                            <span class="font-bold text-slate-900">2. dash</span>
+                            <div class="my-2 text-slate-600 space-x-3 text-xs"><label><input type="radio" name="p10-2" value="cash" onclick="syncRadioToInput(this)"> cash</label> <label><input type="radio" name="p10-2" value="floss" onclick="syncRadioToInput(this)"> floss</label> <label><input type="radio" name="p10-2" value="cost" onclick="syncRadioToInput(this)"> cost</label></div>
+                            <input type="text" data-ans="cash" class="p-2 border border-slate-200 rounded-xl w-full text-center font-bold text-violet-900 focus:ring-2 focus:ring-violet-500" placeholder="Type rhyme">
+                        </div>
+
+                        <div class="p-4 bg-slate-50/80 rounded-2xl border border-slate-200/80">
+                            <span class="font-bold text-slate-900">3. rod</span>
+                            <div class="my-2 text-slate-600 space-x-3 text-xs"><label><input type="radio" name="p10-3" value="add" onclick="syncRadioToInput(this)"> add</label> <label><input type="radio" name="p10-3" value="odd" onclick="syncRadioToInput(this)"> odd</label> <label><input type="radio" name="p10-3" value="told" onclick="syncRadioToInput(this)"> told</label></div>
+                            <input type="text" data-ans="odd" class="p-2 border border-slate-200 rounded-xl w-full text-center font-bold text-violet-900 focus:ring-2 focus:ring-violet-500" placeholder="Type rhyme">
+                        </div>
+
+                        <div class="p-4 bg-slate-50/80 rounded-2xl border border-slate-200/80">
+                            <span class="font-bold text-slate-900">4. stuff</span>
+                            <div class="my-2 text-slate-600 space-x-3 text-xs"><label><input type="radio" name="p10-4" value="stung" onclick="syncRadioToInput(this)"> stung</label> <label><input type="radio" name="p10-4" value="stiff" onclick="syncRadioToInput(this)"> stiff</label> <label><input type="radio" name="p10-4" value="bluff" onclick="syncRadioToInput(this)"> bluff</label></div>
+                            <input type="text" data-ans="bluff" class="p-2 border border-slate-200 rounded-xl w-full text-center font-bold text-violet-900 focus:ring-2 focus:ring-violet-500" placeholder="Type rhyme">
+                        </div>
+
+                        <div class="p-4 bg-slate-50/80 rounded-2xl border border-slate-200/80">
+                            <span class="font-bold text-slate-900">5. bat</span>
+                            <div class="my-2 text-slate-600 space-x-3 text-xs"><label><input type="radio" name="p10-5" value="flat" onclick="syncRadioToInput(this)"> flat</label> <label><input type="radio" name="p10-5" value="plot" onclick="syncRadioToInput(this)"> plot</label> <label><input type="radio" name="p10-5" value="float" onclick="syncRadioToInput(this)"> float</label></div>
+                            <input type="text" data-ans="flat" class="p-2 border border-slate-200 rounded-xl w-full text-center font-bold text-violet-900 focus:ring-2 focus:ring-violet-500" placeholder="Type rhyme">
+                        </div>
+
+                        <div class="p-4 bg-slate-50/80 rounded-2xl border border-slate-200/80">
+                            <span class="font-bold text-slate-900">6. pill</span>
+                            <div class="my-2 text-slate-600 space-x-3 text-xs"><label><input type="radio" name="p10-6" value="mile" onclick="syncRadioToInput(this)"> mile</label> <label><input type="radio" name="p10-6" value="mill" onclick="syncRadioToInput(this)"> mill</label> <label><input type="radio" name="p10-6" value="mall" onclick="syncRadioToInput(this)"> mall</label></div>
+                            <input type="text" data-ans="mill" class="p-2 border border-slate-200 rounded-xl w-full text-center font-bold text-violet-900 focus:ring-2 focus:ring-violet-500" placeholder="Type rhyme">
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-base font-bold text-violet-900 mb-2 flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-lg bg-violet-100 text-violet-800 flex items-center justify-center text-xs">B</span> Alphabetical Order (to second letter):
+                    </h3>
+                    <p class="text-xs text-slate-500 font-semibold mb-3">Words: <strong>grim, blot, sum, build, shelf</strong></p>
+                    <div class="grid grid-cols-1 sm:grid-cols-5 gap-2">
+                        <div class="flex items-center gap-2"><span class="text-xs font-bold text-slate-400">16.</span><input type="text" data-ans="blot" class="w-full p-2 border border-slate-200 rounded-xl text-sm font-bold text-violet-900"></div>
+                        <div class="flex items-center gap-2"><span class="text-xs font-bold text-slate-400">17.</span><input type="text" data-ans="build" class="w-full p-2 border border-slate-200 rounded-xl text-sm font-bold text-violet-900"></div>
+                        <div class="flex items-center gap-2"><span class="text-xs font-bold text-slate-400">18.</span><input type="text" data-ans="grim" class="w-full p-2 border border-slate-200 rounded-xl text-sm font-bold text-violet-900"></div>
+                        <div class="flex items-center gap-2"><span class="text-xs font-bold text-slate-400">19.</span><input type="text" data-ans="shelf" class="w-full p-2 border border-slate-200 rounded-xl text-sm font-bold text-violet-900"></div>
+                        <div class="flex items-center gap-2"><span class="text-xs font-bold text-slate-400">20.</span><input type="text" data-ans="sum" class="w-full p-2 border border-slate-200 rounded-xl text-sm font-bold text-violet-900"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= PAGE 19 ================= -->
+        <div id="page-p19" class="page-content space-y-6 hidden">
+            <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80">
+                <div class="border-b border-slate-100 pb-5 mb-5">
+                    <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Phonics/Spelling Word Sort</h2>
+                    <p class="text-xs sm:text-sm text-slate-500 font-medium mt-1">Unit 1 Week 2 • Long a Vowel Patterns (Page 19)</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                    <div class="p-4 bg-purple-50/40 rounded-2xl border border-purple-100">
+                        <h4 class="font-bold text-purple-900 mb-2">long a spelled <em>a</em></h4>
+                        <div class="flex items-center gap-2"><span class="w-5 text-xs">1.</span><input type="text" data-ans="major" class="w-full p-2 border border-slate-200 rounded-xl font-bold text-violet-900"></div>
+                    </div>
+
+                    <div class="p-4 bg-purple-50/40 rounded-2xl border border-purple-100">
+                        <h4 class="font-bold text-purple-900 mb-2">long a spelled <em>ay</em></h4>
+                        <div class="space-y-2">
+                            <div class="flex items-center gap-2"><span class="w-5 text-xs">2.</span><input type="text" data-ans="today" class="w-full p-2 border border-slate-200 rounded-xl font-bold text-violet-900"></div>
+                            <div class="flex items-center gap-2"><span class="w-5 text-xs">3.</span><input type="text" data-ans="stray" class="w-full p-2 border border-slate-200 rounded-xl font-bold text-violet-900"></div>
+                            <div class="flex items-center gap-2"><span class="w-5 text-xs">4.</span><input type="text" data-ans="clay" class="w-full p-2 border border-slate-200 rounded-xl font-bold text-violet-900"></div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 bg-purple-50/40 rounded-2xl border border-purple-100">
+                        <h4 class="font-bold text-purple-900 mb-2">long a spelled <em>a_e</em></h4>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="flex items-center gap-1"><span class="w-4 text-xs">5.</span><input type="text" data-ans="pale" class="w-full p-1.5 border border-slate-200 rounded-lg font-bold text-violet-900"></div>
+                            <div class="flex items-center gap-1"><span class="w-4 text-xs">6.</span><input type="text" data-ans="face" class="w-full p-1.5 border border-slate-200 rounded-lg font-bold text-violet-900"></div>
+                            <div class="flex items-center gap-1"><span class="w-4 text-xs">7.</span><input type="text" data-ans="graze" class="w-full p-1.5 border border-slate-200 rounded-lg font-bold text-violet-900"></div>
+                            <div class="flex items-center gap-1"><span class="w-4 text-xs">8.</span><input type="text" data-ans="ache" class="w-full p-1.5 border border-slate-200 rounded-lg font-bold text-violet-900"></div>
+                            <div class="flex items-center gap-1"><span class="w-4 text-xs">9.</span><input type="text" data-ans="cane" class="w-full p-1.5 border border-slate-200 rounded-lg font-bold text-violet-900"></div>
+                            <div class="flex items-center gap-1"><span class="w-4 text-xs">10.</span><input type="text" data-ans="slate" class="w-full p-1.5 border border-slate-200 rounded-lg font-bold text-violet-900"></div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 bg-purple-50/40 rounded-2xl border border-purple-100">
+                        <h4 class="font-bold text-purple-900 mb-2">long a spelled <em>ai</em></h4>
+                        <div class="space-y-1.5">
+                            <div class="flex items-center gap-2"><span class="w-5 text-xs">11.</span><input type="text" data-ans="claim" class="w-full p-1.5 border border-slate-200 rounded-lg font-bold text-violet-900"></div>
+                            <div class="flex items-center gap-2"><span class="w-5 text-xs">12.</span><input type="text" data-ans="bail" class="w-full p-1.5 border border-slate-200 rounded-lg font-bold text-violet-900"></div>
+                            <div class="flex items-center gap-2"><span class="w-5 text-xs">13.</span><input type="text" data-ans="drain" class="w-full p-1.5 border border-slate-200 rounded-lg font-bold text-violet-900"></div>
+                            <div class="flex items-center gap-2"><span class="w-5 text-xs">14.</span><input type="text" data-ans="faint" class="w-full p-1.5 border border-slate-200 rounded-lg font-bold text-violet-900"></div>
+                            <div class="flex items-center gap-2"><span class="w-5 text-xs">15.</span><input type="text" data-ans="rail" class="w-full p-1.5 border border-slate-200 rounded-lg font-bold text-violet-900"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= PAGE 20 ================= -->
+        <div id="page-p20" class="page-content space-y-6 hidden">
+            <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80">
+                <div class="border-b border-slate-100 pb-5 mb-5">
+                    <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Spelling Word Meaning</h2>
+                    <p class="text-xs sm:text-sm text-slate-500 font-medium mt-1">Unit 1 Week 2 • Sentences & Definitions (Page 20)</p>
+                </div>
+
+                <div class="space-y-3 text-sm mb-8">
+                    <div class="flex items-center gap-2 flex-wrap"><span>1. Horses will</span><input type="text" data-ans="graze" class="w-32 p-1.5 border border-slate-200 rounded-xl font-bold text-violet-900"><span>on this green grass all day if you let them.</span></div>
+                    <div class="flex items-center gap-2 flex-wrap"><span>2. The girls were best friends, and</span><input type="text" data-ans="they" class="w-32 p-1.5 border border-slate-200 rounded-xl font-bold text-violet-900"><span>went everywhere together.</span></div>
+                    <div class="flex items-center gap-2 flex-wrap"><span>3. The</span><input type="text" data-ans="major" class="w-32 p-1.5 border border-slate-200 rounded-xl font-bold text-violet-900"><span>ordered the troops to attack at sunrise.</span></div>
+                    <div class="flex items-center gap-2 flex-wrap"><span>4. He stood on the</span><input type="text" data-ans="rail" class="w-32 p-1.5 border border-slate-200 rounded-xl font-bold text-violet-900"><span>of the fence to see better.</span></div>
+                    <div class="flex items-center gap-2 flex-wrap"><span>5. The lost hiker smiled when he saw the</span><input type="text" data-ans="faint" class="w-32 p-1.5 border border-slate-200 rounded-xl font-bold text-violet-900"><span>glow of a house light.</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= PAGE 21 ================= -->
+        <div id="page-p21" class="page-content space-y-6 hidden">
+            <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80">
+                <div class="border-b border-slate-100 pb-5 mb-5">
+                    <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Spelling Proofreading</h2>
+                    <p class="text-xs sm:text-sm text-slate-500 font-medium mt-1">Unit 1 Week 2 • Find & Correct Misspelled Words (Page 21)</p>
+                </div>
+
+                <h3 class="text-sm font-bold text-slate-800 mb-3">Write the 6 misspelled words correctly:</h3>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8">
+                    <div class="flex items-center gap-2"><span class="text-xs font-bold text-slate-400">1.</span><input type="text" data-ans="today" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm font-bold text-violet-900"></div>
+                    <div class="flex items-center gap-2"><span class="text-xs font-bold text-slate-400">2.</span><input type="text" data-ans="clay" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm font-bold text-violet-900"></div>
+                    <div class="flex items-center gap-2"><span class="text-xs font-bold text-slate-400">3.</span><input type="text" data-ans="slate" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm font-bold text-violet-900"></div>
+                    <div class="flex items-center gap-2"><span class="text-xs font-bold text-slate-400">4.</span><input type="text" data-ans="stray" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm font-bold text-violet-900"></div>
+                    <div class="flex items-center gap-2"><span class="text-xs font-bold text-slate-400">5.</span><input type="text" data-ans="break" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm font-bold text-violet-900"></div>
+                    <div class="flex items-center gap-2"><span class="text-xs font-bold text-slate-400">6.</span><input type="text" data-ans="obey" class="w-full p-2.5 border border-slate-200 rounded-xl text-sm font-bold text-violet-900"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= PAGE 22 ================= -->
+        <div id="page-p22" class="page-content space-y-6 hidden">
+            <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80">
+                <div class="border-b border-slate-100 pb-5 mb-5">
+                    <h2 class="text-2xl font-bold text-slate-900 tracking-tight">Phonics/Spelling Review</h2>
+                    <p class="text-xs sm:text-sm text-slate-500 font-medium mt-1">Unit 1 Week 2 • Long a Rhymes Review (Page 22)</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-sm">
+                    <div class="p-3.5 bg-slate-50/80 rounded-2xl border border-slate-200/80">
+                        <span class="font-bold text-slate-900">1. gate</span>
+                        <input type="text" data-ans="slate" class="p-2 border border-slate-200 rounded-xl w-full text-center font-bold text-violet-900 mt-2" placeholder="Rhyme">
+                    </div>
+                    <div class="p-3.5 bg-slate-50/80 rounded-2xl border border-slate-200/80">
+                        <span class="font-bold text-slate-900">2. pail</span>
+                        <input type="text" data-ans="bail" class="p-2 border border-slate-200 rounded-xl w-full text-center font-bold text-violet-900 mt-2" placeholder="Rhyme">
+                    </div>
+                    <div class="p-3.5 bg-slate-50/80 rounded-2xl border border-slate-200/80">
+                        <span class="font-bold text-slate-900">3. shame</span>
+                        <input type="text" data-ans="claim" class="p-2 border border-slate-200 rounded-xl w-full text-center font-bold text-violet-900 mt-2" placeholder="Rhyme">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200/80 py-6 text-center text-xs text-slate-500 mt-auto">
+        <p class="font-medium">McGraw-Hill Reading Wonders Grade 4 • Interactive Practice Exam</p>
+        <p class="mt-1 text-slate-400">Prepared for Dima ✨</p>
+    </footer>
+
+    <script>
+        let currentTab = 'p7';
+
+        const pageBadges = {
+            'p7': 'Unit 1 Week 1 • Page 7 (Word Sort)',
+            'p8': 'Unit 1 Week 1 • Page 8 (Word Meaning)',
+            'p9': 'Unit 1 Week 1 • Page 9 (Proofreading)',
+            'p10': 'Unit 1 Week 1 • Page 10 (Review)',
+            'p19': 'Unit 1 Week 2 • Page 19 (Word Sort)',
+            'p20': 'Unit 1 Week 2 • Page 20 (Word Meaning)',
+            'p21': 'Unit 1 Week 2 • Page 21 (Proofreading)',
+            'p22': 'Unit 1 Week 2 • Page 22 (Review)'
+        };
+
+        function switchTab(tabId) {
+            currentTab = tabId;
+            document.querySelectorAll('.page-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById('page-' + tabId).classList.remove('hidden');
+
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+
+            document.getElementById('current-page-badge').textContent = pageBadges[tabId];
+            updatePageScore();
+        }
+
+        function syncRadioToInput(radio) {
+            const container = radio.closest('div.p-4, div.p-3.5');
+            if (container) {
+                const input = container.querySelector('input[data-ans]');
+                if (input) {
+                    input.value = radio.value;
+                }
+            }
+        }
+
+        function checkCurrentPage() {
+            const pageEl = document.getElementById('page-' + currentTab);
+            const inputs = pageEl.querySelectorAll('input[data-ans]');
+            let correct = 0;
+            let total = inputs.length;
+
+            inputs.forEach(input => {
+                const target = input.getAttribute('data-ans').trim().toLowerCase();
+                const val = input.value.trim().toLowerCase();
+
+                if (val === target) {
+                    input.classList.remove('incorrect-input');
+                    input.classList.add('correct-input');
+                    correct++;
+                } else if (val.length > 0) {
+                    input.classList.remove('correct-input');
+                    input.classList.add('incorrect-input');
+                } else {
+                    input.classList.remove('correct-input', 'incorrect-input');
+                }
+            });
+
+            updatePageScore();
+
+            if (total > 0 && correct === total) {
+                confetti({
+                    particleCount: 120,
+                    spread: 80,
+                    origin: { y: 0.6 }
+                });
+            }
+        }
+
+        function solveCurrentPage() {
+            const pageEl = document.getElementById('page-' + currentTab);
+            const inputs = pageEl.querySelectorAll('input[data-ans]');
+
+            inputs.forEach(input => {
+                const target = input.getAttribute('data-ans');
+                input.value = target;
+                input.classList.remove('incorrect-input');
+                input.classList.add('correct-input');
+            });
+
+            if (currentTab === 'p10') {
+                inputs.forEach((input) => {
+                    const ans = input.getAttribute('data-ans');
+                    const radios = document.querySelectorAll(`input[value="${ans}"]`);
+                    radios.forEach(r => r.checked = true);
+                });
+            }
+
+            updatePageScore();
+        }
+
+        function resetCurrentPage() {
+            const pageEl = document.getElementById('page-' + currentTab);
+            const inputs = pageEl.querySelectorAll('input[data-ans]');
+
+            inputs.forEach(input => {
+                input.value = '';
+                input.classList.remove('correct-input', 'incorrect-input');
+            });
+
+            const radios = pageEl.querySelectorAll('input[type="radio"]');
+            radios.forEach(r => r.checked = false);
+
+            updatePageScore();
+        }
+
+        function solveAllPages() {
+            Object.keys(pageBadges).forEach(pId => {
+                const pageEl = document.getElementById('page-' + pId);
+                const inputs = pageEl.querySelectorAll('input[data-ans]');
+                inputs.forEach(input => {
+                    input.value = input.getAttribute('data-ans');
+                    input.classList.remove('incorrect-input');
+                    input.classList.add('correct-input');
+                });
+            });
+
+            fillSampleStoryP9();
+            updatePageScore();
+
+            confetti({
+                particleCount: 180,
+                spread: 100,
+                origin: { y: 0.5 }
+            });
+        }
+
+        function updatePageScore() {
+            const pageEl = document.getElementById('page-' + currentTab);
+            const inputs = pageEl.querySelectorAll('input[data-ans]');
+            let correct = 0;
+            inputs.forEach(i => {
+                if (i.value.trim().toLowerCase() === i.getAttribute('data-ans').trim().toLowerCase()) {
+                    correct++;
+                }
+            });
+
+            document.getElementById('score-val').textContent = correct;
+            document.getElementById('total-val').textContent = inputs.length;
+        }
+
+        function fillSampleStoryP9() {
+            const textEl = document.getElementById('p9-story');
+            if (textEl) {
+                textEl.value = "Yesterday in our classroom, we sat on a flat rug to build a poster. When we finished, we left the classroom and heard a bell. Biscuit wanted a crunch snack!";
+            }
+        }
+
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkCurrentPage();
+            }
+        });
+    </script>
+</body>
+</html>
